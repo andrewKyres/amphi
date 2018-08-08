@@ -1,0 +1,6 @@
+[package]
+name = "amphi"
+version = "0.1.0"
+authors = ["Andrew <andrewkyres117@gmail.com>"]
+
+[dependencies]
