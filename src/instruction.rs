@@ -1,8 +1,9 @@
 /// Represents an opcode, which tells our interpreter what to do with the following operands
 #[derive(Debug, PartialEq)]
 pub enum Opcode {
+    LOAD,
     HLT,
-    IGL
+    IGL,
 }
 
 /// Represents a combination of an opcode and operands for the VM to execute
@@ -23,8 +24,9 @@ impl Instruction {
 impl From<u8> for Opcode {
     fn from(v: u8) -> Self {
         match v {
-            0 => return Opcode::HLT,
-            _ => return Opcode::IGL
+            0 => Opcode::LOAD,
+            1 => Opcode::HLT,
+            _ => Opcode::IGL,
         }
     }
 }
