@@ -7,9 +7,7 @@ pub struct VM {
     /// Program counter that tracks which byte is being executed
     pc: usize,
     /// The bytecode of the program being run
-    program: Vec<u8>,
-    /// Whether to run the VM in debug mode
-    debug: bool
+    program: Vec<u8>
 }
 
 impl VM {
@@ -19,34 +17,41 @@ impl VM {
             registers: [0; 32],
             program: vec![],
             pc: 0,
-            debug: false,
         }
     }
 
-    /// Starts the primary execution loop
-    pub fn run(&mut self) -> u8 {
-        loop {
-            /// Our program counter can't exceed the length of the program
-            if self.pc >= self.program.len() {
-                println!("pc exceeds program length");
-                return 1;
-            }
-            match self.decode_opcode() {
-                Opcode::HLT => {
-                    println!("HLT encountered");
-                    return 0;
-                },
-                _ => {
-                    println!("Unrecognized opcode found! Terminating!");
-                    return 1;
-                }
-            }
-
-            if self.debug {
-                println!("debug iteration complete");
-                return 0;
-            }
+    /// Loops until there there are no more instructions to be executed or there is an error.
+    pub fn run(&mut self) {
+        let mut is_done = false;
+        while !is_done {
+            is_done = self.execute_instruction();
         }
+    }
+
+    /// Executes one instruction. Meant to allow for more controlled execution of the VM
+    /// TODO revisit when optimizing for performance.
+    pub fn run_once(&mut self) {
+        self.execute_instruction();
+    }
+
+    fn execute_instruction(&mut self) -> bool {
+        if self.pc >= self.program.len() {
+            return false;
+        }
+        match self.decode_opcode() {
+            Opcode::HLT => {
+                println!("HLT encountered");
+                return false;
+            },
+            //Opcode::IGL => {
+                //println!("Illegal instruction encountered");
+                //return false;
+            //},
+            _ => {
+                println!("Let's temporarily have unrecognized opcodes pass through");
+            },
+        }
+        true
     }
 
     /// Decodes the byte in which the VM's program counter is pointing to, into an opcode
@@ -70,9 +75,9 @@ mod tests {
     #[test]
     fn test_opcode_hlt() {
         let mut test_vm = VM::new();
-        let test_bytes = vec![0,0,0,0];
+        let test_bytes = vec![6,0,0,0];
         test_vm.program = test_bytes;
-        test_vm.run();
+        test_vm.run_once();
         assert_eq!(test_vm.pc, 1);
     }
 
@@ -81,14 +86,8 @@ mod tests {
         let mut test_vm = VM::new();
         let test_bytes = vec![254,0,0,0];
         test_vm.program = test_bytes;
-        test_vm.run();
+        test_vm.run_once();
         assert_eq!(test_vm.pc, 1);
-    }
-
-    #[test]
-    fn test_debug_mode() {
-        let mut test_vm = VM::new();
-        assert_eq!(test_vm.run(), 0);
     }
 }
 
