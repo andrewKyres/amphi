@@ -1,16 +1,24 @@
 /// Represents an opcode, which tells our interpreter what to do with the following operands
 #[derive(Debug, PartialEq)]
 pub enum Opcode {
+    IGL,
+    HLT,
     LOAD,
     ADD,
     SUB,
     MUL,
     DIV,
-    HLT,
     JMP,
     JMPF,
     JMPB,
-    IGL,
+    EQ,
+    NEQ,
+    GT,
+    LT,
+    GTE,
+    LTE,
+    JMPE,
+    NOP,
 }
 
 /// Represents a combination of an opcode and operands for the VM to execute
@@ -40,6 +48,14 @@ impl From<u8> for Opcode {
             7 => Opcode::JMP,
             8 => Opcode::JMPF,
             9 => Opcode::JMPB,
+            10 => Opcode::EQ,
+            11 => Opcode::NEQ,
+            12 => Opcode::GT,
+            13 => Opcode::LT,
+            14 => Opcode::GTE,
+            15 => Opcode::LTE,
+            16 => Opcode::JMPE,
+            17 => Opcode::NOP,
             _ => Opcode::IGL,
         }
     }
